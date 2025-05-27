@@ -256,6 +256,20 @@ class Davis90_triplet:
         self.db_dir = db_dir
         self.transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]) #outptu tensor in [-1,1]
 
+    
+    def get_sample(self, seq, t):
+        seqpath = join(self.db_dir, seq)
+
+        im3 = Image.open(join(seqpath, str(t+2).zfill(5)+'.jpg'))
+        im4 = Image.open(join(seqpath, str(t+3).zfill(5)+'.jpg'))
+        im5 = Image.open(join(seqpath, str(t+4).zfill(5)+'.jpg'))
+
+        im3 = self.transform(im3).cuda().unsqueeze(0)
+        im4 = self.transform(im4).cuda().unsqueeze(0)
+        im5 = self.transform(im5).cuda().unsqueeze(0)
+
+        return im3, im4, im5
+
 
     def eval(self, model, sample_func, metrics=['PSNR', 'SSIM'], output_dir=None, output_name=None, resume=False):
         model.eval()
